@@ -78,7 +78,7 @@ def mainPage() {
 			input "bulbs", "capability.switchLevel", title: "Which Smart Bulbs?", required:true, multiple:true
 		}
 		section("Choose smart bulb brightness...") {
-			input "bulbLevel", "enum", title: "Light Level?", required: false, options: [[10:"10%"],[20:"20%"],[30:"30%"],[40:"40%"],[50:"50%"],[60:"60%"],[70:"70%"],[80:"80%"],[90:"90%"],[99:"100%"]]
+			input "bulbLevel", "enum", title: "Light Level?", required: false, options: [10,20,30,40,50,60,70,80,90,99]
 		}
 
 		section("More options", hideable: true, hidden: true) {
@@ -263,7 +263,8 @@ private takeAction(evt) {
 
 	def newValue = [hue: hueColor, saturation: saturation, level: lightLevel as Integer ?: 100]
 	// Added
-	def bulbNewValue = [level: bulbLevel as Integer ?: 100]
+    log.debug "bulbLevel = $bulbLevel"
+	def bulbNewValue = bulbLevel
 
 	log.debug "new hue value = $newValue"
 	// Added
