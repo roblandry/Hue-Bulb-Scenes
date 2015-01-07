@@ -264,7 +264,7 @@ private takeAction(evt) {
 	def newValue = [hue: hueColor, saturation: saturation, level: lightLevel as Integer ?: 100]
 	// Added
     log.debug "bulbLevel = $bulbLevel"
-	def bulbNewValue = bulbLevel
+	def bulbNewValue = bulbLevel.toInteger()
 
 	log.debug "new hue value = $newValue"
 	// Added
