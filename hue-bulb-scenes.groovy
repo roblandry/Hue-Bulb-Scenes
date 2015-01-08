@@ -2,8 +2,10 @@
  *  Hue/Bulb Scenes
  *
  *  Author: Rob Landry
- *  *
- *  Date: 2015-01-06
+ *  
+ *  Version: 1.0.1
+ *  
+ *  Date: 2015-01-07
  */
 definition(
     name: "Hue/Bulb Scenes",
@@ -66,19 +68,25 @@ def mainPage() {
 		section("Choose light effects...")
 			{
 				input "color", "enum", title: "Hue Color?", required: false, multiple:false, options: [
-					["Soft White":"Soft White - Default"],
-					["White":"White - Concentrate"],
-					["Daylight":"Daylight - Energize"],
-					["Warm White":"Warm White - Relax"],
-					"Red","Green","Blue","Yellow","Orange","Purple","Pink"]
-				input "lightLevel", "enum", title: "Light Level?", required: false, options: [[10:"10%"],[20:"20%"],[30:"30%"],[40:"40%"],[50:"50%"],[60:"60%"],[70:"70%"],[80:"80%"],[90:"90%"],[100:"100%"]]
+					"Soft White":"Soft White - Default",
+					"White":"White - Concentrate",
+					"Daylight":"Daylight - Energize",
+					"Warm White":"Warm White - Relax",
+					"Red":"Red",
+                    "Green":"Green",
+                    "Blue":"Blue",
+                    "Yellow":"Yellow",
+                    "Orange":"Orange",
+                    "Purple":"Purple",
+                    "Pink":"Pink"]
+				input "lightLevel", "enum", title: "Light Level?", required: false, options: [10:"10%",20:"20%",30:"30%",40:"40%",50:"50%",60:"60%",70:"70%",80:"80%",90:"90%",100:"100%"]
 			}
 // Added
 		section("Control these smart bulbs...") {
 			input "bulbs", "capability.switchLevel", title: "Which Smart Bulbs?", required:true, multiple:true
 		}
 		section("Choose smart bulb brightness...") {
-			input "bulbLevel", "enum", title: "Light Level?", required: false, options: [10,20,30,40,50,60,70,80,90,99]
+			input "bulbLevel", "enum", title: "Light Level?", required: false, options: [10:"10%",20:"20%",30:"30%",40:"40%",50:"50%",60:"60%",70:"70%",80:"80%",90:"90%",100:"100%"]
 		}
 
 		section("More options", hideable: true, hidden: true) {
@@ -262,17 +270,14 @@ private takeAction(evt) {
 	log.debug "current values = $state.previous"
 
 	def newValue = [hue: hueColor, saturation: saturation, level: lightLevel as Integer ?: 100]
-	// Added
-    log.debug "bulbLevel = $bulbLevel"
-	def bulbNewValue = bulbLevel.toInteger()
+	def bulbNewValue = [level: bulbLevel as Integer ?: 100]
 
 	log.debug "new hue value = $newValue"
-	// Added
-	log.debug "new bulb value = $bulbNewValue"
+	log.debug "new bulb value = $bulbNewValue.level"
 
 	hues*.setColor(newValue)
-	// Added
-	bulbs*.setLevel(bulbNewValue)
+	bulbs*.setLevel(bulbNewValue.level)
+    
 }
 
 private frequencyKey(evt) {
