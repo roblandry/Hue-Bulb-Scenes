@@ -3,7 +3,7 @@
  *
  *  Author: Rob Landry
  *  
- *  Version: 1.0.1
+ *  Version: 1.0.2
  *  
  *  Date: 2015-01-07
  */
@@ -62,33 +62,36 @@ def mainPage() {
 			ifUnset "triggerModes", "mode", title: "System Changes Mode", description: "Select mode(s)", required: false, multiple: true
 			ifUnset "timeOfDay", "time", title: "At a Scheduled Time", required: false
 		}
-		section("Control these hue bulbs...") {
-			input "hues", "capability.colorControl", title: "Which Hue Bulbs?", required:true, multiple:true
+
+		// Hue Bulbs //
+		section("Color Settings for Hue Bulbs...") {
+			input "hues", "capability.colorControl", title: "Which Hue Bulbs?", required:false, multiple:true
+			input "color", "enum", title: "Hue Color?", required: false, multiple:false, options: [
+				"Soft White":"Soft White - Default",
+				"White":"White - Concentrate",
+				"Daylight":"Daylight - Energize",
+				"Warm White":"Warm White - Relax",
+				"Red":"Red",
+				"Green":"Green",
+				"Blue":"Blue",
+				"Yellow":"Yellow",
+				"Orange":"Orange",
+				"Purple":"Purple",
+				"Pink":"Pink"]
+			input "lightLevel", "enum", title: "Light Level?", required: false, options: [10:"10%",20:"20%",30:"30%",40:"40%",50:"50%",60:"60%",70:"70%",80:"80%",90:"90%",100:"100%"]
 		}
-		section("Choose light effects...")
-			{
-				input "color", "enum", title: "Hue Color?", required: false, multiple:false, options: [
-					"Soft White":"Soft White - Default",
-					"White":"White - Concentrate",
-					"Daylight":"Daylight - Energize",
-					"Warm White":"Warm White - Relax",
-					"Red":"Red",
-                    "Green":"Green",
-                    "Blue":"Blue",
-                    "Yellow":"Yellow",
-                    "Orange":"Orange",
-                    "Purple":"Purple",
-                    "Pink":"Pink"]
-				input "lightLevel", "enum", title: "Light Level?", required: false, options: [10:"10%",20:"20%",30:"30%",40:"40%",50:"50%",60:"60%",70:"70%",80:"80%",90:"90%",100:"100%"]
-			}
-// Added
-		section("Control these smart bulbs...") {
-			input "bulbs", "capability.switchLevel", title: "Which Smart Bulbs?", required:true, multiple:true
-		}
-		section("Choose smart bulb brightness...") {
+
+		// Smart Bulbs //
+		section("Brightness Settings for Smart Bulbs...") {
+			input "bulbs", "capability.switchLevel", title: "Which Smart Bulbs?", required:false, multiple:true
 			input "bulbLevel", "enum", title: "Light Level?", required: false, options: [10:"10%",20:"20%",30:"30%",40:"40%",50:"50%",60:"60%",70:"70%",80:"80%",90:"90%",100:"100%"]
 		}
 
+		section("Turn off these Hue/Smart Bulbs...") {
+			input "bulbsOff", "capability.switchLevel", title: "Which Bulbs?", required:false, multiple:true
+		}
+
+		// More Options //
 		section("More options", hideable: true, hidden: true) {
 			input "frequency", "decimal", title: "Minimum time between actions (defaults to every event)", description: "Minutes", required: false
 			href "timeIntervalInput", title: "Only during a certain time", description: timeLabel ?: "Tap to set", state: timeLabel ? "complete" : "incomplete"
@@ -267,6 +270,12 @@ private takeAction(evt) {
 		]
 	}
 
+	bulbsOff.each {
+		state.previous[it.id] = [
+			"switch": it.currentValue("switch")
+        ]
+    }
+
 	log.debug "current values = $state.previous"
 
 	def newValue = [hue: hueColor, saturation: saturation, level: lightLevel as Integer ?: 100]
@@ -277,6 +286,7 @@ private takeAction(evt) {
 
 	hues*.setColor(newValue)
 	bulbs*.setLevel(bulbNewValue.level)
+	bulbsOff*.off()
     
 }
 
