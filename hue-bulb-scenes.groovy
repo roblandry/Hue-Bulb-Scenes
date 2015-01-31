@@ -87,8 +87,9 @@ def mainPage() {
 			input "bulbLevel", "enum", title: "Light Level?", required: false, options: [10:"10%",20:"20%",30:"30%",40:"40%",50:"50%",60:"60%",70:"70%",80:"80%",90:"90%",100:"100%"]
 		}
 
+		// Turn Off //
 		section("Turn off these Hue/Smart Bulbs...") {
-			input "bulbsOff", "capability.switchLevel", title: "Which Bulbs?", required:false, multiple:true
+			input "bulbsOff", "capability.switch", title: "Which Bulbs?", required:false, multiple:true
 		}
 
 		// More Options //
