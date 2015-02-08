@@ -31,6 +31,11 @@ def mainPage() {
 	dynamicPage(name: "mainPage") {
 		def anythingSet = anythingSet()
 		if (anythingSet) {
+			section("Info") {
+				paragraph "Author: \tRob Landry"
+				paragraph "Version: \t1.0.2"
+				paragraph "Date: \t1/7/2015"
+			}
 			section("Set the lighting mood when..."){
 				ifSet "motion", "capability.motionSensor", title: "Motion Here", required: false, multiple: true
 				ifSet "contact", "capability.contactSensor", title: "Contact Opens", required: false, multiple: true
